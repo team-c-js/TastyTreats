@@ -45,7 +45,7 @@ const ApiService = {
       return handleError(error, 'getRecipeDetail');
     }
   },
-  
+
   async createOrder(orderData) {
     try {
       const response = await axios.post(
@@ -57,7 +57,7 @@ const ApiService = {
       return handleError(error, 'createOrder');
     }
   },
-  
+
   async submitRating(ratingData) {
     try {
       console.log(ratingData.rating);
@@ -68,7 +68,7 @@ const ApiService = {
         rate: ratingData.rating,
         email: ratingData.email,
       },
-        
+
       );
       return response.data;
     } catch (error) {
@@ -79,7 +79,7 @@ const ApiService = {
 
 const UIManager = {
   currentRecipeId: null,
-  
+
   async openPopup(popupType, recipeId) {
     this.currentRecipeId = recipeId;
     const popup = document.querySelector('.popup');
@@ -88,7 +88,7 @@ const UIManager = {
     popup.style.display = 'block';
     document.body.style.overflow = 'hidden';
     this.resetPopupContent();
-    
+
     if(popupType === 'popup-food'){
       await this.fillPopupContent(recipeId);
     }else if(popupType === 'popup-order'){
@@ -99,15 +99,15 @@ const UIManager = {
       this.setupRatingListener();
     }
   },
-  
+
   resetPopupContent() {
     const popup = document.querySelector('.popup-content');
     popup.innerHTML = '';
   },
-  
+
   closePopup() {
     const closeBtn = document.querySelector('.popup-close');
-    
+
     const popup = document.querySelector('.popup');
     function close(){
       const video = document.querySelector('.popup-video');
@@ -126,12 +126,12 @@ const UIManager = {
         }
       });
   },
-  
+
   async fillPopupContent(recipeId) {
     try {
       const recipe = await ApiService.getRecipeDetail(recipeId);
       if (!recipe) return;
-        
+
       const popup = document.querySelector('.popup-content');
       popup.innerHTML = '';
       const videoId = new URL(recipe.youtube).searchParams.get("v");
@@ -141,14 +141,14 @@ const UIManager = {
       popup.innerHTML = `
         <h3 class="popup-title">${recipe.title}</h3>
         <div class="popup-video">
-          <iframe 
-            width="100%" 
-            height="250" 
-            src="https://www.youtube.com/embed/${videoId}" 
-            title="" 
-            frameborder="0" 
-            allow="accelerometer;clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" 
+          <iframe
+            width="100%"
+            height="250"
+            src="https://www.youtube.com/embed/${videoId}"
+            title=""
+            frameborder="0"
+            allow="accelerometer;clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen>
           </iframe>
         </div>
@@ -168,7 +168,7 @@ const UIManager = {
                 <span class="popup-time">
                     ${recipe.time} min
                 </span>
-            </div> 
+            </div>
         </div>
 
         <ul class="popup-recipt">
@@ -196,43 +196,46 @@ const UIManager = {
             </button>
         </div>
       `;
-      
+
     } catch (error) {
       console.error('Popup içeriği yüklenirken hata:', error);
-    } 
+    }
   },
 
   async fillPopupOrder(recipeId) {
-    try {
-      const popup = document.querySelector('.popup-content');
-      popup.innerHTML = `
-        <h3 class="popup-title">ORDER NOW</h3>
-        <form class="popup-order-form">
-          <div class="form-row">
-            <label for="name">Name</label>
-            <input type="text" class="popup-input" id="name" required>
-          </div>
-          <div class="form-row">
-            <label for="phone-number">Phone number</label>
-            <input type="tel" class="popup-input" id="phone-number" required value="+380730000000"
-                   placeholder="380730000000">
-          </div>
-          <div class="form-row">
-            <label for="email">Email</label>
-            <input type="email" class="popup-input" id="email" required>
-          </div>
-          <div class="form-row">
-            <label for="user-comment">Comment</label>
-            <textarea name="user_comment" id="user-comment" class="popup-input" ></textarea>
-          </div>
-          <button type="submit" class="popup-green-btn">Send</button>
-        </form>
-      `;
-    } catch(error) {
-      console.error('Order popup oluşturulurken hata:', error);
-    }
-  },
-  
+  try {
+    const popup = document.querySelector('.popup-content');
+    popup.innerHTML = `
+      <h3 class="popup-title">ORDER NOW</h3>
+      <form class="popup-order-form">
+        <div class="form-row">
+          <label for="name">Name</label>
+          <input type="text" class="popup-input" id="name" required>
+        </div>
+        <div class="form-row">
+          <label for="phone-number">Phone number</label>
+          <input type="tel" class="popup-input" id="phone-number" required value="+380730000000"
+                 placeholder="380730000000">
+        </div>
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="email" class="popup-input" id="email" required>
+        </div>
+        <div class="form-row">
+          <label for="user-comment">Comment</label>
+          <textarea name="user_comment" id="user-comment" class="popup-input" required></textarea>
+        </div>
+        <button type="submit" class="popup-green-btn">Send</button>
+      </form>
+    `;
+    setTimeout(() => {
+      this.setupOrderFormListener();
+    }, 50);
+  } catch(error) {
+    console.error('Order popup oluşturulurken hata:', error);
+  }
+},
+
   async fillRatingPopup(recipeId) {
     try {
       const popup = document.querySelector('.popup-content');
@@ -260,7 +263,7 @@ const UIManager = {
       console.error('Rating popup oluşturulurken hata:', error);
     }
   },
-  
+
   setupRatingListener() {
     const stars = document.querySelectorAll('.raiting-stars .popup-star');
     const ratingCounter = document.querySelector('.raiting-counter');
@@ -288,15 +291,15 @@ const UIManager = {
     if (ratingForm) {
       ratingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const email = ratingForm.querySelector('#email').value.trim();
-        
-        
+
+
         if (!email) {
           alert('Lütfen e-posta adresinizi girin');
           return;
         }
-        
+
         if (currentRating === 0) {
           alert('Lütfen bir puan seçin');
           return;
@@ -308,17 +311,17 @@ const UIManager = {
             rating: currentRating,
             email: email
           };
-          
+
           const result = await ApiService.submitRating(ratingData);
           if (result) {
-            
+
             const popup = document.querySelector('.popup');
             popup.style.display = 'none';
             iziToast.success({
               title: 'Teşekkürler!',
               message: 'Değerlendirmeniz için teşekkür ederiz!',
-              position: 'topRight', 
-              timeout: 3000,        
+              position: 'topRight',
+              timeout: 3000,
             });
 
           }
@@ -326,14 +329,14 @@ const UIManager = {
           iziToast.success({
               title: 'Hata!',
               message: 'Bazı Şeyler Yanlış Gitti...',
-              position: 'topRight', 
-              timeout: 3000,        
+              position: 'topRight',
+              timeout: 3000,
             });
         }
       });
     }
   },
-  
+
   updateStars(stars, activeCount) {
     stars.forEach(star => {
       const value = parseInt(star.getAttribute('data-value'));
@@ -344,57 +347,139 @@ const UIManager = {
       }
     });
   },
-  
+
   setupOrderFormListener() {
-    const orderForm = document.querySelector('.popup-order-form');
-    if (!orderForm) return;
+  const orderForm = document.querySelector('.popup-order-form');
+  if (!orderForm) return;
+  orderForm.replaceWith(orderForm.cloneNode(true));
+  const newOrderForm = document.querySelector('.popup-order-form');
 
-    orderForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = {
-        name: orderForm.querySelector('#name').value.trim(),
-        phone: orderForm.querySelector('#phone-number').value.trim(),
-        email: orderForm.querySelector('#email').value.trim(),
-        comment: orderForm.querySelector('#user-comment').value.trim()
-      };
-      
-      if (!formData.name || !formData.phone || !formData.email) {
-        alert('Lütfen zorunlu alanları doldurun');
-        return;
-      }
-      
-      if (!/^\+380\d{9}$/.test(formData.phone)) {
-        alert('Lütfen geçerli bir telefon numarası girin (örn. +380730000000)');
-        return;
-      }
-      
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        alert('Lütfen geçerli bir e-posta adresi girin');
-        return;
-      }
+  const inputs = newOrderForm.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      this.validateField(input);
+    });
 
-      try {
-        const result = await ApiService.createOrder(formData);
-        if (result) {
-          const popup = document.querySelector('.popup');
-          popup.style.display = 'none';
-          iziToast.success({
-              title: 'Teşekkürler!',
-              message: 'Siparişiniz Başarıyla Alındı!',
-              position: 'topRight', 
-              timeout: 3000,        
-            });
-        }
-      } catch (error) {
-        iziToast.success({
-              title: 'Hata!',
-              message: 'Sipariş gönderilirken hata:', error,
-              position: 'topRight', 
-              timeout: 3000,        
-        });
+    input.addEventListener('blur', () => {
+      this.validateField(input);
+    });
+  });
+
+  newOrderForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    let isValid = true;
+    inputs.forEach(input => {
+      if (!this.validateField(input)) {
+        isValid = false;
       }
     });
-  },
+
+    if (!isValid) return;
+
+    const formData = {
+      name: newOrderForm.querySelector('#name').value.trim(),
+      phone: newOrderForm.querySelector('#phone-number').value.trim(),
+      email: newOrderForm.querySelector('#email').value.trim(),
+      comment: newOrderForm.querySelector('#user-comment').value.trim()
+    };
+
+    try {
+      const result = await ApiService.createOrder(formData);
+      if (result) {
+        const popup = document.querySelector('.popup');
+        popup.style.display = 'none';
+        iziToast.success({
+          title: 'Teşekkürler!',
+          message: 'Siparişiniz Başarıyla Alındı!',
+          position: 'topRight',
+          timeout: 3000,
+        });
+      }
+    } catch (error) {
+      iziToast.error({
+        title: 'Hata!',
+        message: 'Sipariş gönderilirken hata oluştu',
+        position: 'topRight',
+        timeout: 3000,
+      });
+    }
+  });
+},
+
+validateField(field) {
+  const value = field.value.trim();
+  let isValid = true;
+  let errorMessage = '';
+
+  this.removeError(field);
+
+  switch (field.id) {
+    case 'name':
+      if (!value) {
+        errorMessage = 'İsim alanı zorunludur';
+        isValid = false;
+      } else if (value.length < 3) {
+        errorMessage = 'İsim en az 3 karakter olmalıdır';
+        isValid = false;
+      }
+      break;
+
+    case 'phone-number':
+      if (!value) {
+        errorMessage = 'Telefon numarası zorunludur';
+        isValid = false;
+      } else if (!/^\+380\d{9}$/.test(value)) {
+        errorMessage = 'Geçerli bir telefon numarası girin (örn. +380730000000)';
+        isValid = false;
+      }
+      break;
+
+    case 'email':
+      if (!value) {
+        errorMessage = 'E-posta adresi zorunludur';
+        isValid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        errorMessage = 'Geçerli bir e-posta adresi girin';
+        isValid = false;
+      }
+      break;
+
+    case 'user-comment':
+      if (!value) {
+        errorMessage = 'Yorum alanı zorunludur';
+        isValid = false;
+      }
+      break;
+  }
+
+  if (!isValid) {
+    this.showError(field, errorMessage);
+  }
+
+  return isValid;
+},
+
+showError(field, message) {
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message';
+  errorDiv.style.color = 'red';
+  errorDiv.style.fontSize = '12px';
+  errorDiv.style.marginTop = '5px';
+  errorDiv.textContent = message;
+
+  field.parentNode.appendChild(errorDiv);
+  field.style.borderColor = 'red';
+},
+
+removeError(field) {
+  const errorDiv = field.parentNode.querySelector('.error-message');
+  if (errorDiv) {
+    errorDiv.remove();
+  }
+  field.style.borderColor = '';
+},
+
 
   setupPopupListeners() {
     document.body.addEventListener('click', async (event) => {
@@ -406,7 +491,7 @@ const UIManager = {
       await this.openPopup(popupType, recipeId);
     });
   },
-  
+
   getStars(star) {
     let starsHtml = ``;
     const raitingStar = Math.floor(star);
